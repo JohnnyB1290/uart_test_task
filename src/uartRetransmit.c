@@ -19,24 +19,27 @@ static void rxCallback(unsigned char byte);
 
 
 
-void startRetransmition(Uart_t* rxUart, Uart_t* txUart)
+int startRetransmition(Uart_t* rxUart, Uart_t* txUart)
 {
 	if((!rxUart) || (!txUart)){
-		return;
+		return -1;
 	}
 	rxUart_ = rxUart;
 	txUart_ = txUart;
 	rxUart_->setRxCallback(rxCallback);
+	return 0;
 }
 
 
 
 void stopRetransmition(void)
 {
-	blockCounter_ = 0;
 	if(rxUart_){
 		rxUart_->setRxCallback(NULL);
 	}
+	rxUart_ = NULL;
+	txUart_ = NULL;
+	blockCounter_ = 0;
 }
 
 
@@ -53,7 +56,9 @@ static void rxCallback(unsigned char byte)
 	 */
 	block_[blockCounter_++] = byte;
 	if((blockCounter_ % RETRANSMIT_BLOCK_SIZE) == 0){
-		txUart_->tx(block_, RETRANSMIT_BLOCK_SIZE);
+		if(txUart_){
+			txUart_->tx(block_, RETRANSMIT_BLOCK_SIZE);
+		}
 		blockCounter_ = 0;
 	}
 }

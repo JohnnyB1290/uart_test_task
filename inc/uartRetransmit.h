@@ -29,9 +29,11 @@ extern "C" {
   *
   * @param[in] rxUart UART instance pointer to uart, that receives data
   * @param[in] txUart UART instance pointer to uart, that transmit data
-  * @return nothing
+  * @return
+  *  - 0 on success
+  *  - -1 on error
   */
-void startRetransmition(Uart_t* rxUart, Uart_t* txUart);
+int startRetransmition(Uart_t* rxUart, Uart_t* txUart);
 
 /**
   * @brief Stops retransmission. Resets block counter.
