@@ -12,6 +12,7 @@
 
 static Uart_t uartInstance_;
 static UartRxCallback_t rxCallback_ = NULL;
+static void* ctx_ = NULL;
 static UartMockTxCallback_t txCallback_ = NULL;
 
 
@@ -20,6 +21,7 @@ static void deInitialize(void){ }
 static int setBaudrate(unsigned int baudrate){ return UART_ERR_OK; }
 static int setParity(UartParity_t parity){ return UART_ERR_OK; }
 static int setStopBit(UartStopBitDuration_t duration){ return UART_ERR_OK; }
+void setCtx(void* ctx){ ctx_ = ctx;}
 static int txByte(unsigned char byte);
 static int tx(const unsigned char* data, unsigned int dataSize);
 
@@ -44,7 +46,7 @@ void uartMockRxData(unsigned char* data, unsigned int dataSize)
 {
 	if(rxCallback_){
 		for(unsigned int i = 0; i < dataSize; i++){
-			rxCallback_(data[i]);
+			rxCallback_(data[i], ctx_);
 		}
 	}
 }
@@ -72,6 +74,7 @@ Uart_t* getUart(UartNum_t num)
 		uartInstance_.setParity = setParity;
 		uartInstance_.setStopBit = setStopBit;
 		uartInstance_.setRxCallback = setRxCallback;
+		uartInstance_.setCtx = setCtx;
 		uartInstance_.txByte = txByte;
 		uartInstance_.tx = tx;
 		ini = 1;

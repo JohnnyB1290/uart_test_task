@@ -15,7 +15,7 @@ static Uart_t* txUart_ = NULL;
 static unsigned char block_[RETRANSMIT_BLOCK_SIZE];
 static unsigned int blockCounter_ = 0;
 
-static void rxCallback(unsigned char byte);
+static void rxCallback(unsigned char byte, void* ctx);
 
 
 
@@ -44,7 +44,7 @@ void stopRetransmition(void)
 
 
 
-static void rxCallback(unsigned char byte)
+static void rxCallback(unsigned char byte, void* ctx)
 {
 	/**
 	 *	As this callback will be called from ISR,

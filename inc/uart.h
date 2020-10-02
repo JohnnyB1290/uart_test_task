@@ -19,7 +19,7 @@ extern "C" {
 /* Size of the transmit ring buffer */
 #define UART_TX_BUFFER_SIZE		2048
 
-typedef void (*UartRxCallback_t)(unsigned char byte);
+typedef void (*UartRxCallback_t)(unsigned char byte, void* ctx);
 
 #define UART_DEFAULT_CONFIG() { 			\
 	.baudrate 			= 115200,			\
@@ -27,6 +27,7 @@ typedef void (*UartRxCallback_t)(unsigned char byte);
 	.stopBitDuration 	= STOP_BIT_1,		\
 	.interruptPriority 	= 0,				\
 	.rxCallback 		= NULL,				\
+	.ctx				= NULL,				\
 }
 
 typedef enum
@@ -74,6 +75,11 @@ typedef struct
 	 * so you should exit from it as soon as possible.
 	 */
 	UartRxCallback_t rxCallback;
+	/**
+	 * User context. This context will be sent in parameters
+	 * of rx callback.
+	 */
+	void* ctx;
 }UartConfig_t;
 
 typedef struct
@@ -125,7 +131,6 @@ typedef struct
 	  */
 	int (*setStopBit)(UartStopBitDuration_t duration);
 
-
 	/**
 	  * @brief Sets receive callback function
 	  *
@@ -133,6 +138,14 @@ typedef struct
 	  * @return nothing
 	  */
 	void (*setRxCallback)(UartRxCallback_t rxCallback);
+
+	/**
+	  * @brief Sets user context
+	  *
+	  * @param[in] ctx User context.
+	  * @return nothing
+	  */
+	void (*setCtx)(void* ctx);
 
 	/**
 	  * @brief Transmits 1 byte.
